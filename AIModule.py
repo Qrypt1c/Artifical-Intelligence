@@ -7,9 +7,19 @@ import math
 createPath(map map_) -> list<points>: Adds points to a path'''
 class AIModule:
 
-	def createPath(self, map_):
-		pass
-
+	def heuristicComputation(node1, node2, mapCopy):
+		heightDiff = mapCopy.getCost(node1, node2)
+		x2 = node2.x
+		x1 = node1.x
+		y2 = node2.y
+		y1 = node1.y
+		d = math.sqrt((x2-x1)**2 + (y2-y1)**2)
+		if heightDiff == 1:
+			return 1*d
+		elif heightDiff > 1:
+			return 2*heightDiff
+		else:
+			return d*2**(heightDiff/d)
 '''
 A sample AI that takes a very suboptimal path.
 This is a sample AI that moves as far horizontally as necessary to reach
@@ -105,8 +115,9 @@ class AStarExp(AIModule):
 				prev[str(i)+','+str(j)] = None
 				explored[str(i)+','+str(j)] = False
 		current_point = deepcopy(map_.start)
-		goal = deepcopy(map_.getEndPoint())
 		current_point.comparator = 0
+		goal = deepcopy(map_.goal)
+		goal.comparator = 0
 		cost[str(current_point.x)+','+str(current_point.y)] = 0
 		q.put(current_point)
 		while q.qsize() > 0:
@@ -123,7 +134,7 @@ class AStarExp(AIModule):
 			for neighbor in neighbors:
 				alt = map_.getCost(v, neighbor) + cost[str(v.x)+','+str(v.y)]
 				if alt < cost[str(neighbor.x)+','+str(neighbor.y)]:
-					cost[str(neighbor.x)+','+str(neighbor.y)] = alt
+					cost[str(neighbor.x)+','+str(neighbor.y)] = alt + AIModule.heuristicComputation(neighbor, goal, map_)
 					neighbor.comparator = alt
 					prev[str(neighbor.x)+','+str(neighbor.y)] = v
 				q.put(neighbor)
