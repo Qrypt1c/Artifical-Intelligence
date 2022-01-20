@@ -1,0 +1,59 @@
+Seed 0 (EXP):
+Time (s):  1.3674542903900146
+Path cost: 215.5
+Nodes explored:  10554
+
+Seed 1 (EXP):
+Time (s):  3.835165023803711
+Path cost: 219.0
+Nodes explored:  10995
+
+Seed 2 (EXP):
+Time (s):  2.5300309658050537
+Path cost: 226.5
+Nodes explored:  12496
+
+Seed 3 (EXP):
+Time (s):  12.018496036529541
+Path cost: 349.5
+Nodes explored:  124034
+
+Seed 4 (EXP):
+Time (s):  3.5363173484802246
+Path cost: 249.5
+Nodes explored:  20790
+
+Seed 5 (EXP):
+Time (s):  3.9493606090545654
+Path cost: 260.5
+Nodes explored:  28190
+
+Seed 0 (DIV):
+Time (s):  9.745200157165527
+Path cost: 197.0832924952719
+Nodes explored:  158492
+
+Seed 1 (DIV):
+Time (s):  9.211530208587646
+Path cost: 197.16506331383655
+Nodes explored:  159692
+
+Seed 2 (DIV):
+Time (s):  10.949533462524414
+Path cost: 197.00834323943513
+Nodes explored:  159612
+
+>>>Seed 3 (DIV)<<<:
+Time (s):  8.991084098815918
+Path cost: 198.13126781818744
+Nodes explored:  160312
+
+Seed 4 (DIV):
+Time (s):  11.084299802780151
+Path cost: 197.24833470274933
+Nodes explored:  158171
+
+Seed 5 (DIV):
+Time (s):  9.236320972442627
+Path cost: 197.44394694763412
+Nodes explored:  144659

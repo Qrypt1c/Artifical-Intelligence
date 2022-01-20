@@ -1,0 +1,59 @@
+Seed 0 EXP
+Time (s):  8.217457056045532
+Path cost: 215.5
+Nodes explored:  155417
+
+Seed 1 EXP
+Time (s):  7.757514953613281
+Path cost: 219.0
+Nodes explored:  146477
+
+Seed 2 EXP
+Time (s):  8.06091570854187
+Path cost: 226.5
+Nodes explored:  155809
+
+Seed 3 EXP
+Time (s):  10.941309690475464
+Path cost: 349.5
+Nodes explored:  222299
+
+Seed 4 EXP
+Time (s):  8.290703296661377
+Path cost: 249.5
+Nodes explored:  160998
+
+Seed 5 EXP
+Time (s):  11.273263931274414
+Path cost: 260.5
+Nodes explored:  195514
+
+Seed 0 DIV
+Time (s):  8.17420506477356
+Path cost: 197.0832924952719
+Nodes explored:  160032
+
+Seed 1 DIV
+Time (s):  7.9961559772491455
+Path cost: 197.16506331383655
+Nodes explored:  160156
+
+Seed 2 DIV
+Time (s):  8.190228939056396
+Path cost: 197.00834323943513
+Nodes explored:  159806
+
+Seed 3 DIV
+Time (s):  8.106839418411255
+Path cost: 198.13126781818744
+Nodes explored:  161046
+
+Seed 4 DIV
+Time (s):  8.484758853912354
+Path cost: 197.24833470274933
+Nodes explored:  160025
+
+Seed 5 DIV
+Time (s):  8.296209812164307
+Path cost: 197.44394694763412
+Nodes explored:  160795
