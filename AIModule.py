@@ -56,18 +56,7 @@ class AIModule:
 
 		d = max(dy,dx)
 
-		if(goal_height == alt_height):
-			return d*(goal_height/(1+alt_height))
-		elif(goal_height == alt_height+1):
-			return d
-		elif(goal_height > alt_height):
-			if y2-y1 == 0:
-				return 0
-			else:
-				slope = (x2-x1)/(y2-y1)
-				return slope*d
-		else:
-			return 0
+		return d
 
 	def mshHeuristicComputation(goal_node, alt_node, mapCopy):
 		pass
