@@ -8,7 +8,7 @@ import math
 '''AIModule Interface
 createPath(map map_) -> list<points>: Adds points to a path'''
 class AIModule:
-		
+
 	def expHeuristicComputation(goal_node, alt_node, mapCopy):
 		goal_height = mapCopy.getTile(goal_node.x, goal_node.y)
 		alt_height = mapCopy.getTile(alt_node.x, alt_node.y)
@@ -44,6 +44,7 @@ class AIModule:
 		
 		goal_height = mapCopy.getTile(goal_node.x, goal_node.y)
 		alt_height = mapCopy.getTile(alt_node.x, alt_node.y)
+		heightDiff = goal_height - alt_height
 
 		x2 = goal_node.x
 		y2 = goal_node.y
@@ -55,10 +56,16 @@ class AIModule:
 
 		d = max(dy,dx)
 
-		#if h1 == h0
-		if goal_height == alt_height:
+		if(goal_height == alt_height):
 			return d*(goal_height/(1+alt_height))
-		
+		elif(goal_height == alt_height+1):
+			return d
+		elif(goal_height > alt_height):
+			if y2-y1 == 0:
+				return 0
+			else:
+				slope = (x2-x1)/(y2-y1)
+				return slope*d
 		else:
 			return 0
 
@@ -245,50 +252,3 @@ class AStarMSH(AIModule):
 
 	def createPath(self, map_):
 		pass
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
