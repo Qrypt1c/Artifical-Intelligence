@@ -59,7 +59,34 @@ class AIModule:
 		return d
 
 	def mshHeuristicComputation(goal_node, alt_node, mapCopy):
-		pass
+		goal_height = mapCopy.getTile(goal_node.x, goal_node.y)
+		alt_height = mapCopy.getTile(alt_node.x, alt_node.y)
+		heightDiff = goal_height - alt_height
+
+		x2 = goal_node.x
+		y2 = goal_node.y
+		x1 = alt_node.x
+		y1 = alt_node.y
+
+		dx = abs(x2-x1)
+		dy = abs(y2-y1)
+
+		d = max(dy,dx)
+
+		#if h1 == h0
+		if goal_height == alt_height:
+			return d
+		
+		#if h1 > h0
+		elif goal_height > alt_height:
+			return (2*heightDiff)
+		
+		#if h1 < h0
+		else:
+			if d == 0:
+				return 0
+			else:
+				return d*2**(heightDiff/d)
 	
 '''
 A sample AI that takes a very suboptimal path.
@@ -240,4 +267,46 @@ class AStarDiv(AIModule):
 class AStarMSH(AIModule):
 
 	def createPath(self, map_):
-		pass
+		q = PriorityQueue()
+		cost = {}
+		prev = {}
+		explored = {}
+		for i in range(map_.width):
+			for j in range(map_.length):
+				cost[str(i)+','+str(j)] = math.inf
+				prev[str(i)+','+str(j)] = None
+				explored[str(i)+','+str(j)] = False
+		current_point = deepcopy(map_.start)
+		current_point.comparator = 0
+		
+		#COPY GOAL POINT
+		goal_point = deepcopy(map_.goal)
+		
+		cost[str(current_point.x)+','+str(current_point.y)] = 0
+		q.put(current_point)
+		while q.qsize() > 0:
+			# Get new point from PQ
+			v = q.get()
+			if explored[str(v.x)+','+str(v.y)]:
+				continue
+			explored[str(v.x)+','+str(v.y)] = True
+			# Check if popping off goal
+			if v.x == map_.getEndPoint().x and v.y == map_.getEndPoint().y:
+				break
+			# Evaluate neighbors
+			neighbors = map_.getNeighbors(v)
+			for neighbor in neighbors:
+				alt = map_.getCost(v, neighbor) + cost[str(v.x)+','+str(v.y)]
+				if alt < cost[str(neighbor.x)+','+str(neighbor.y)]:
+					cost[str(neighbor.x)+','+str(neighbor.y)] = alt
+					neighbor.comparator = alt + (AIModule.mshHeuristicComputation(goal_node=goal_point, alt_node=neighbor, mapCopy=map_))
+					prev[str(neighbor.x)+','+str(neighbor.y)] = v
+				q.put(neighbor)
+
+		path = []
+		while not(v.x == map_.getStartPoint().x and v.y == map_.getStartPoint().y):
+			path.append(v)
+			v = prev[str(v.x)+','+str(v.y)]
+		path.append(map_.getStartPoint())
+		path.reverse()
+		return path
