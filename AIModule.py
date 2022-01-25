@@ -1,3 +1,4 @@
+from cmath import sqrt
 from copy import deepcopy
 from curses.ascii import alt
 from importlib.resources import path
@@ -71,7 +72,7 @@ class AIModule:
 		dx = abs(x2-x1)
 		dy = abs(y2-y1)
 
-		d = max(dy,dx)
+		d = max(dx, dy)
 
 		#if h1 == h0
 		if goal_height == alt_height:
@@ -79,7 +80,7 @@ class AIModule:
 		
 		#if h1 > h0
 		elif goal_height > alt_height:
-			return (2*heightDiff)
+			return (2*heightDiff + max(0, d-heightDiff))
 		
 		#if h1 < h0
 		else:
@@ -299,7 +300,7 @@ class AStarMSH(AIModule):
 				alt = map_.getCost(v, neighbor) + cost[str(v.x)+','+str(v.y)]
 				if alt < cost[str(neighbor.x)+','+str(neighbor.y)]:
 					cost[str(neighbor.x)+','+str(neighbor.y)] = alt
-					neighbor.comparator = alt + (AIModule.mshHeuristicComputation(goal_node=goal_point, alt_node=neighbor, mapCopy=map_))
+					neighbor.comparator = alt + (AIModule.mshHeuristicComputation(goal_node=goal_point, alt_node=neighbor, mapCopy=map_)*1.034)
 					prev[str(neighbor.x)+','+str(neighbor.y)] = v
 				q.put(neighbor)
 
