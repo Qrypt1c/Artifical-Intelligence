@@ -128,48 +128,49 @@ class minimaxAI(connect4Player):
 		for row in range(6):
 			for col in range(7):
 				#Initializations
-				downSlopeLTRCount = 0
-				upSlopeLTRCount = 0
-				upDownCount = 0
-				horizontalCount = 0
+				downSlopeLTRCount = upSlopeLTRCount = upDownCount = horizontalCount = 0
 				temp = 0
+				ones = twos = threes = fours = 0
+				count2 = 0
 				
 				if copy.board[row][col] == 1:
 					#Checking for in a row from down slope left to right
-					while(copy.board[row-1][col-1] == 1):
+					while(row-1 > -1 and col-1 > -1 and copy.board[row-1][col-1] == 1):
 						temp += 1
+						print("downSlopeLTR row- col-")
 					downSlopeLTRCount = temp + 1
 					temp = 0
-					while(copy.board[row+1][col+1] == 1):
+					while(row+1 < 6 and col+1 < 7 and copy.board[row+1][col+1] == 1):
 						temp += 1
+						print("downSlopeLTR row+ col+")
 					downSlopeLTRCount = downSlopeLTRCount + temp
 
 					#Now checking for in a row from up slope left to right
-					while(copy.board[row-1][col+1] == 1):
+					while(row-1 > -1 and col+1 < 7 and copy.board[row-1][col+1] == 1):
 						temp += 1
 					upSlopeLTRCount = temp + 1
 					temp = 0
-					while(copy.board[row+1][col-1] == 1):
+					while(row+1 < 6 and col-1 > -1 and copy.board[row+1][col-1] == 1):
 						temp += 1
 					upSlopeLTRCount = upSlopeLTRCount + temp
 					
 					#Now checking for in a col up and down
 					temp = 0
-					while(copy.board[row+1][col] == 1):
+					while(row+1 < 6 and copy.board[row+1][col] == 1):
 						temp += 1
 					upDownCount = temp + 1
 					temp = 0
-					while(copy.board[row-1][col] == 1):
+					while(row-1 > -1 and copy.board[row-1][col] == 1):
 						temp += 1
 					upDownCount = upDownCount + temp
 
 					#Now checking for in a row side to side
 					temp = 0
-					while(copy.board[row][col+1] == 1):
+					while(col+1 < 7 and copy.board[row][col+1] == 1):
 						temp += 1
 					horizontalCount = temp + 1
 					temp = 0
-					while(copy.board[row][col-1] == 1):
+					while(col-1 > -1 and copy.board[row][col-1] == 1):
 						temp += 1
 					horizontalCount = horizontalCount + temp
 
