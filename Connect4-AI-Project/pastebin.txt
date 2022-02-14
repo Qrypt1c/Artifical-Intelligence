@@ -1,0 +1,13 @@
+					ones = 1
+					#Decreasing slope left to right
+					while(copy.board[row][col] == 1):
+						row += 1
+						col += 1
+					#Increasing slope right to left
+					#Straight up and down
+					#Horizontal
+
+
+Special note for debugging: Check the math where var = var + temp, unsure if it actually works
+
+"Here's count 1: ", count1, 
