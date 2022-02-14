@@ -1,6 +1,6 @@
 import argparse
 from time import time
-from AIModule import StupidAI, Djikstras, AStarExp, AStarDiv, AStarMSH
+from AIModule_917717635 import StupidAI, Djikstras, AStarExp, AStarDiv, AStarMSH
 from Map import Map
 
 parser = argparse.ArgumentParser(description='Run programming assignment 1')

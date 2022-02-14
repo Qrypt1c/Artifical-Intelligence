@@ -3,7 +3,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import math
 from Point import Point
-from AIModule import StupidAI, Djikstras, AStarExp
+from AIModule_917717635 import StupidAI, Djikstras, AStarExp
 from perlin import perlin
 from random import random, randint
 from copy import deepcopy
