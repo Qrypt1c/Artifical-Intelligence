@@ -11,3 +11,313 @@
 Special note for debugging: Check the math where var = var + temp, unsure if it actually works
 
 "Here's count 1: ", count1, 
+
+					if downSlopeLTRCount == 1:
+						ones = downSlopeLTRCount
+					elif downSlopeLTRCount == 2:
+						twos = downSlopeLTRCount
+					elif downSlopeLTRCount == 3:
+						threes = downSlopeLTRCount
+					else:
+						fours = downSlopeLTRCount
+					
+					if upSlopeLTRCount == 1:
+						ones = ones + upSlopeLTRCount
+					elif upSlopeLTRCount == 2:
+						twos = twos + upSlopeLTRCount
+					elif upSlopeLTRCount == 3:
+						threes = threes + upSlopeLTRCount
+					else:
+						fours = fours + upSlopeLTRCount
+
+					if upDownCount == 1:
+						ones = ones + upDownCount
+					elif upDownCount == 2:
+						twos = twos + upDownCount
+					elif upDownCount == 3:
+						threes = threes + upDownCount
+					else:
+						fours = fours + upDownCount
+
+					if horizontalCount == 1:
+						ones = ones + horizontalCount
+					elif horizontalCount == 2:
+						twos = twos + horizontalCount
+					elif horizontalCount == 3:
+						threes = threes + horizontalCount
+					else:
+						fours = fours + horizontalCount
+
+
+		# INSERT BS HERE
+		copy = deepcopy(env)
+		for row in range(6):
+			for col in range(7):
+				#Initializations
+				downSlopeLTRCount = upSlopeLTRCount = upDownCount = horizontalCount = 0
+				temp = 0
+				ones = twos = threes = fours = 0
+				count1 = 0
+				count2 = 0
+				print("[row][col]: ", "[", row, "][", col, "]")
+				if copy.board[row][col] == 1:
+				#Checking for in a row from down slope left to right
+					count1 += 1
+					temp = 0
+					while(row-1 > -1 and col-1 > -1 and copy.board[row-1][col-1] == 1):
+						temp += 1
+						row -= 1
+						col -= 1
+						print("downSlopeLTR row- col-")
+					downSlopeLTRCount = temp
+					temp = 0
+					while(row+1 < 6 and col+1 < 7 and copy.board[row+1][col+1] == 1):
+						temp += 1
+						row += 1
+						col += 1
+						print("downSlopeLTR row+ col+")
+					downSlopeLTRCount = downSlopeLTRCount + temp
+					count1 = count1 + downSlopeLTRCount
+					#How many in a row diagonally from left to right (downwards)?
+					if count1 == 1:
+							ones += 1
+					elif count1 == 2:
+							twos += 1
+					elif count1 == 3:
+							threes += 1
+					elif count1 == 4:
+						fours += 1
+						print("fours incremented downSlopeLTR")
+					
+					#Now checking for in a row from up slope left to right
+					count1 = 1
+					temp = 0
+					while(row-1 > -1 and col+1 < 7 and copy.board[row-1][col+1] == 1):
+						temp += 1
+						row -= 1
+						col += 1
+						print("upSlopeLTR row- col+")
+					upSlopeLTRCount = temp
+					temp = 0
+					while(row+1 < 6 and col-1 > -1 and copy.board[row+1][col-1] == 1):
+						temp += 1
+						row += 1
+						col -= 1
+						print("upSlopeLTR row+ col-")
+					upSlopeLTRCount = upSlopeLTRCount + temp
+					count1 = count1 + upSlopeLTRCount
+					#How many in a row diagonally from left to right (upwards)?
+					if count1 == 1:
+						ones += 0
+					elif count1 == 2:
+						twos += 1
+					elif count1 == 3:
+						threes += 1
+					elif count1 == 4:
+						fours += 1
+						print("fours incremented upSlopeLTR")
+					
+					#Now checking for in a col up and down
+					count1 = 1
+					temp = 0
+					while(row+1 < 6 and copy.board[row+1][col] == 1):
+						temp += 1
+						row += 1
+						print("upDown row+ col")
+					upDownCount = temp
+					temp = 0
+					while(row-1 > -1 and copy.board[row-1][col] == 1):
+						temp += 1
+						row -= 1
+						print("upDown row- col")
+					upDownCount = upDownCount + temp
+					count1 = count1 + upDownCount
+					#How many in a column?
+					if count1 == 1:
+						ones += 0
+					elif count1 == 2:
+						twos += 1
+					elif count1 == 3:
+						threes += 1
+					elif count1 == 4:
+						fours += 1
+						print("fours incremented col")
+					
+					#Now checking for in a row side to side
+					count1 = 1
+					temp = 0
+					while(col+1 < 7 and copy.board[row][col+1] == 1):
+						temp += 1
+						col += 1
+						print("horiz row col+")
+					horizontalCount = temp
+					temp = 0
+					while(col-1 > -1 and copy.board[row][col-1] == 1):
+						temp += 1
+						col -= 1
+						print("horiz row col-")
+					horizontalCount = horizontalCount + temp
+					count1 = count1 + horizontalCount
+					#How many in a row?
+					if count1 == 1:
+						ones += 0
+					elif count1 == 2:
+						twos += 1
+					elif count1 == 3:
+						threes += 1
+					elif count1 == 4:
+						fours += 1
+						print("fours incremented row")
+					
+					#Tally results
+					print("downSlopeLTR: ", downSlopeLTRCount)
+					print("upSlopeLTR: ", upSlopeLTRCount)
+					print("upDown: ", upDownCount)
+					print("horizontal: ", horizontalCount)
+					print("count1: ", count1)
+
+				elif copy.board[row][col] == 2:
+					count2 += 1
+					print("Player 2 move at: Row ", row, " Col ", col, " (TRUE INDEXED)")
+
+		print("Number of ones: ", ones, " twos: ", twos, " threes: ", threes, "fours: ", fours)
+		print(" Here's count 2: ", count2)
+		# EXIT BS HERE
+
+
+		# INSERT BS HERE
+		copy = deepcopy(env)
+		for row in range(6):
+			for col in range(7):
+				#Initializations
+				downSlopeLTRCount = upSlopeLTRCount = upDownCount = horizontalCount = 0
+				temp = 0
+				twos = threes = fours = 0
+				count1 = 0
+				count2 = 0
+				print("[row][col]: ", "[", row, "][", col, "]")
+				if copy.board[row][col] == 1:
+				#Checking for in a row from down slope left to right
+					count1 += 1
+					temp = 0
+					while(row-1 > -1 and col-1 > -1 and copy.board[row-1][col-1] == 1):
+						temp += 1
+						row -= 1
+						col -= 1
+						print("downSlopeLTR row- col-")
+					downSlopeLTRCount = temp
+					temp = 0
+					while(row+1 < 6 and col+1 < 7 and copy.board[row+1][col+1] == 1):
+						temp += 1
+						row += 1
+						col += 1
+						print("downSlopeLTR row+ col+")
+					downSlopeLTRCount = downSlopeLTRCount + temp
+					count1 = count1 + downSlopeLTRCount
+					#How many in a row diagonally from left to right (downwards)?
+					#if count1 == 1:
+					#		ones += 1
+					if count1 == 2:
+							twos += 1
+					elif count1 == 3:
+							threes += 1
+					elif count1 == 4:
+						fours += 1
+						print("fours incremented downSlopeLTR")
+					
+					#Now checking for in a row from up slope left to right
+					count1 = 1
+					temp = 0
+					while(row-1 > -1 and col+1 < 7 and copy.board[row-1][col+1] == 1):
+						temp += 1
+						row -= 1
+						col += 1
+						print("upSlopeLTR row- col+")
+					upSlopeLTRCount = temp
+					temp = 0
+					while(row+1 < 6 and col-1 > -1 and copy.board[row+1][col-1] == 1):
+						temp += 1
+						row += 1
+						col -= 1
+						print("upSlopeLTR row+ col-")
+					upSlopeLTRCount = upSlopeLTRCount + temp
+					count1 = count1 + upSlopeLTRCount
+					#How many in a row diagonally from left to right (upwards)?
+					#if count1 == 1:
+					#	ones += 0
+					if count1 == 2:
+						twos += 1
+					elif count1 == 3:
+						threes += 1
+					elif count1 == 4:
+						fours += 1
+						print("fours incremented upSlopeLTR")
+					
+					#Now checking for in a col up and down
+					count1 = 1
+					temp = 0
+					while(row+1 < 6 and copy.board[row+1][col] == 1):
+						temp += 1
+						row += 1
+						print("upDown row+ col")
+					upDownCount = temp
+					temp = 0
+					while(row-1 > -1 and copy.board[row-1][col] == 1):
+						temp += 1
+						row -= 1
+						print("upDown row- col")
+					upDownCount = upDownCount + temp
+					count1 = count1 + upDownCount
+					print("count1 after upDown adder: ", count1)
+					#How many in a column?
+					#if count1 == 1:
+					#	ones += 0
+					if count1 == 2:
+						twos += 1
+						print("value of twos incremented")
+					elif count1 == 3:
+						threes += 1
+					elif count1 == 4:
+						fours += 1
+						print("fours incremented col")
+					
+					#Now checking for in a row side to side
+					count1 = 1
+					temp = 0
+					while(col+1 < 7 and copy.board[row][col+1] == 1):
+						temp += 1
+						col += 1
+						print("horiz row col+")
+					horizontalCount = temp
+					temp = 0
+					while(col-1 > -1 and copy.board[row][col-1] == 1):
+						temp += 1
+						col -= 1
+						print("horiz row col-")
+					horizontalCount = horizontalCount + temp
+					count1 = count1 + horizontalCount
+					#How many in a row?
+					#if count1 == 1:
+					#	ones += 0
+					if count1 == 2:
+						twos += 1
+					elif count1 == 3:
+						threes += 1
+					elif count1 == 4:
+						fours += 1
+						print("fours incremented row")
+					
+					#Tally results
+					print("downSlopeLTR: ", downSlopeLTRCount)
+					print("upSlopeLTR: ", upSlopeLTRCount)
+					print("upDown: ", upDownCount)
+					print("horizontal: ", horizontalCount)
+					print("count1: ", count1)
+
+				elif copy.board[row][col] == 2:
+					count2 += 1
+					print("Player 2 move at: Row ", row, " Col ", col, " (TRUE INDEXED)")
+
+		print("Number of twos: ", twos, " threes: ", threes, "fours: ", fours)
+		print(" Here's count 2: ", count2)
+		# EXIT BS HERE
