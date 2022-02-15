@@ -148,16 +148,16 @@ class minimaxAI(connect4Player):
 
 	def eval(self, env):
 		copy = deepcopy(env)
-		ones = twos = threes = fours = 0
 		
 		for row in range(6):
 			for col in range(7):
+				ones = twos = threes = fours = 0
 				if copy.board[row][col] == 1:
 					print("I'm in player 1")
 					#check diagonals
 					val = self.backSlashDiag(copy.board,row,col)
 					if val == 1:
-						ones += 1
+						ones = 1
 					elif val == 2:
 						twos += 1
 					elif val == 3:
@@ -166,7 +166,7 @@ class minimaxAI(connect4Player):
 						fours += 1
 					val = self.forwardSlashDiag(copy.board,row,col)
 					if val == 1:
-						ones += 1
+						ones = 1
 					elif val == 2:
 						twos += 1
 					elif val == 3:
@@ -176,7 +176,7 @@ class minimaxAI(connect4Player):
 					#check horizontal
 					val = self.horizontal(copy.board,row,col)
 					if val == 1:
-						ones += 1
+						ones = 1
 					elif val == 2:
 						twos += 1
 					elif val == 3:
@@ -186,19 +186,19 @@ class minimaxAI(connect4Player):
 					#check vertical
 					val = self.vertical(copy.board,row,col)
 					if val == 1:
-						ones += 1
+						ones = 1
 					elif val == 2:
 						twos += 1
 					elif val == 3:
 						threes += 1
 					elif val == 4:
 						fours += 1
-					print("This is how many ones: ", ones, " twos: ", twos, " threes: ", threes, " fours: ", fours)
 				elif copy.board[row][col] == 2:
 					print("I'm in player 2")
 					#check diagonals
 					#check horizontal
 					#check vertical
+		print("This is how many ones: ", ones, " twos: ", twos, " threes: ", threes, " fours: ", fours)
 
 	
 	def play(self, env, move):
