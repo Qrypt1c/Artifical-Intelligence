@@ -5,6 +5,7 @@ from os import getenv
 import random
 import time
 from turtle import down
+from typing import Counter
 import pygame
 import math
 
@@ -85,77 +86,95 @@ class minimaxAI(connect4Player):
 
 	def backSlashDiag(self, board, row, col, player, inARow):
 		tally = 0
-		temp_inARow = inARow
+		temp_inARow = inARow-1
 		temp_row = row
 		temp_col = col
 		while(temp_row-1 > -1 and temp_col-1 > -1 and temp_inARow > 0 and board[temp_row-1][temp_col-1] == player):
-			#Remove tally not the point of it here
-			tally += 1
 			temp_inARow -= 1
 			temp_row -= 1
 			temp_col -= 1
-		temp_inARow = inARow
-		temp_row = row
-		temp_col = col
-		while(temp_row+1 < 6 and temp_col+1 < 7 and board[temp_row+1][temp_col+1] == player):
-			tally += 1
-			temp_inARow -= 1
-			temp_row += 1
-			temp_col += 1
+		if temp_inARow == 0:
+			tally = 1
+		
+		#Avoid double counting
+		#temp_inARow = inARow
+		#temp_row = row
+		#temp_col = col
+		#while(temp_row+1 < 6 and temp_col+1 < 7 and temp_inARow > 0 and board[temp_row+1][temp_col+1] == player):
+		#	temp_inARow -= 1
+		#	temp_row += 1
+		#	temp_col += 1
+		#if temp_inARow == 0:
+		#	tally += 1
 		
 		return tally
 	
 	def forwardSlashDiag(self, board, row, col, player, inARow):
 		tally = 0
-		temp_inARow = inARow
+		temp_inARow = inARow-1
 		temp_row = row
 		temp_col = col
 		while(temp_row-1 > -1 and temp_col+1 < 7 and temp_inARow > 0 and board[temp_row-1][temp_col+1] == player):
-			tally += 1
 			temp_inARow -= 1
 			temp_row -= 1
 			temp_col += 1
+		if temp_inARow == 0:
+			tally = 1
 		
-		temp_inARow = inARow
-		temp_row = row
-		temp_col = col
-		while(temp_row+1 < 6 and temp_col-1 > -1 and temp_inARow > 0 and board[temp_row+1][temp_col-1] == player):
-			tally += 1
-			temp_inARow -= 1
-			temp_row += 1
-			temp_col -= 1
+		#Avoid double counting
+		#temp_inARow = inARow
+		#temp_row = row
+		#temp_col = col
+		#while(temp_row+1 < 6 and temp_col-1 > -1 and temp_inARow > 0 and board[temp_row+1][temp_col-1] == player):
+		#	temp_inARow -= 1
+		#	temp_row += 1
+		#	temp_col -= 1
+		#if temp_inARow == 0:
+		#	tally += 1
 		
 		return tally
 	
 	def vertical(self, board, row, col, player, inARow):
 		tally = 0
+		temp_inARow = inARow-1
 		temp_row = row
-		while(temp_row+1 < 6 and board[temp_row+1][col] == player):
-			count += 1
+		while(temp_row+1 < 6 and temp_inARow > 0 and board[temp_row+1][col] == player):
+			temp_inARow -= 1
 			temp_row += 1
 			print("row-")
+		if temp_inARow == 0:
+			tally = 1
+			print("Tally changed vertical!")
 		
-		temp_row = row
-		while(temp_row-1 > -1 and board[temp_row-1][col] == player):
-			count += 1
-			temp_row -= 1
-			print("row-")
+		#Avoid double counting
+		#temp_inARow = inARow
+		#temp_row = row
+		#while(temp_row-1 > -1 and board[temp_row-1][col] == player):
+		#	temp_inARow -= 1
+		#	temp_row -= 1
+		#	print("row-")
+		#if temp_inARow == 0:
+		#	tally += 1
 		
-		return count
+		return tally
 	
 	def horizontal(self, board, row, col, player, inARow):
-		count = 1
+		tally = 0
+		temp_inARow = inARow-1
 		temp_col = col
-		while(temp_col+1 < 7 and board[row][temp_col+1] == player):
-			count += 1
+		while(temp_col+1 < 7 and temp_inARow > 0 and board[row][temp_col+1] == player):
+			temp_inARow -= 1
 			temp_col += 1
+		if temp_inARow == 0:
+			tally = 1
 		
-		temp_col = col
-		while(temp_col-1 > -1 and board[row][temp_col-1] == player):
-			count += 1
-			temp_col -= 1
+		#Avoid double counting
+		#temp_col = col
+		#while(temp_col-1 > -1 and board[row][temp_col-1] == player):
+		#	count += 1
+		#	temp_col -= 1
 		
-		return count
+		return tally
 	
 	def eval(self, env):
 		copy = deepcopy(env)
@@ -165,32 +184,37 @@ class minimaxAI(connect4Player):
 			opponent = 2
 		elif self.position == 2:
 			opponent = 1
-		
-		#Start counting
-		myTwos = self.inARowCheck(copy, self.position, 2)
-		myThrees = self.inARowCheck(copy, self.position, 3)
-		myFours = self.inARowCheck(copy, self.position, 4)
 
-		opponentTwos = self.inARowCheck(copy, opponent, 2)
-		opponentThrees = self.inARowCheck(copy, opponent, 3)
-		opponentFours = self.inARowCheck(copy, opponent, 4)
+		#Start counting
+		myTwos = self.inARowCheck(copy.board, self.position, 2)
+		myThrees = self.inARowCheck(copy.board, self.position, 3)
+		myFours = self.inARowCheck(copy.board, self.position, 4)
+		print("My twos: ", myTwos, " threes: ", myThrees, " fours: ", myFours)
+
+		opponentTwos = self.inARowCheck(copy.board, opponent, 2)
+		opponentThrees = self.inARowCheck(copy.board, opponent, 3)
+		opponentFours = self.inARowCheck(copy.board, opponent, 4)
+		print("Opponent twos: ", opponentTwos, " threes: ", opponentThrees, " fours: ", opponentFours)
 
 		#Tally things up
 		total = 8*(myFours - opponentFours) + 4*(myThrees - opponentThrees) + 2*(myTwos - opponentTwos)
 		return total
 
 	def inARowCheck(self, board, player, inARow):
+		counter = 0
 		for row in range(6):
 			for col in range(7):
 				if board[row][col] == player:
+					print("[Row][Col]: [",row,"][",col,"]" )
 					#Check left down diagonal
-					self.backSlashDiag(board, row, col, player, inARow)
+					counter += self.backSlashDiag(board, row, col, player, inARow)
 					#Check left up diagonal
-					self.forwardSlashDiag(board, row, col, player, inARow)
+					counter += self.forwardSlashDiag(board, row, col, player, inARow)
 					#Check vertical
-					self.vertical(board, row, col, player, inARow)
+					counter += self.vertical(board, row, col, player, inARow)
 					#Check horizontals
-					self.horizontal(board, row, col, player, inARow)
+					counter += self.horizontal(board, row, col, player, inARow)
+		return counter
 		
 	
 	def play(self, env, move):
