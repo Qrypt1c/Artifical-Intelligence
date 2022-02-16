@@ -1,4 +1,5 @@
 from cmath import inf
+from codecs import backslashreplace_errors
 from copy import copy, deepcopy
 from os import getenv
 import random
@@ -82,124 +83,115 @@ class stupidAI(connect4Player):
 class minimaxAI(connect4Player):
 	
 
-	def backSlashDiag(self, board, row, col):
-		count = 1
+	def backSlashDiag(self, board, row, col, player, inARow):
+		tally = 0
+		temp_inARow = inARow
 		temp_row = row
 		temp_col = col
-		while(temp_row-1 > -1 and temp_col-1 > -1 and board[temp_row-1][temp_col-1] == 1):
-			count += 1
+		while(temp_row-1 > -1 and temp_col-1 > -1 and temp_inARow > 0 and board[temp_row-1][temp_col-1] == player):
+			#Remove tally not the point of it here
+			tally += 1
+			temp_inARow -= 1
 			temp_row -= 1
 			temp_col -= 1
-		
+		temp_inARow = inARow
 		temp_row = row
 		temp_col = col
-		while(temp_row+1 < 6 and temp_col+1 < 7 and board[temp_row+1][temp_col+1] == 1):
-			count += 1
+		while(temp_row+1 < 6 and temp_col+1 < 7 and board[temp_row+1][temp_col+1] == player):
+			tally += 1
+			temp_inARow -= 1
 			temp_row += 1
 			temp_col += 1
 		
-		return count
+		return tally
 	
-	def forwardSlashDiag(self, board, row, col):
-		count = 1
+	def forwardSlashDiag(self, board, row, col, player, inARow):
+		tally = 0
+		temp_inARow = inARow
 		temp_row = row
 		temp_col = col
-		while(temp_row-1 > -1 and temp_col+1 < 7 and board[temp_row-1][temp_col+1] == 1):
-			count += 1
+		while(temp_row-1 > -1 and temp_col+1 < 7 and temp_inARow > 0 and board[temp_row-1][temp_col+1] == player):
+			tally += 1
+			temp_inARow -= 1
 			temp_row -= 1
 			temp_col += 1
 		
+		temp_inARow = inARow
 		temp_row = row
 		temp_col = col
-		while(temp_row+1 < 6 and temp_col-1 > -1 and board[temp_row+1][temp_col-1] == 1):
+		while(temp_row+1 < 6 and temp_col-1 > -1 and temp_inARow > 0 and board[temp_row+1][temp_col-1] == player):
+			tally += 1
+			temp_inARow -= 1
+			temp_row += 1
+			temp_col -= 1
+		
+		return tally
+	
+	def vertical(self, board, row, col, player, inARow):
+		tally = 0
+		temp_row = row
+		while(temp_row+1 < 6 and board[temp_row+1][col] == player):
 			count += 1
 			temp_row += 1
+			print("row-")
+		
+		temp_row = row
+		while(temp_row-1 > -1 and board[temp_row-1][col] == player):
+			count += 1
+			temp_row -= 1
+			print("row-")
+		
+		return count
+	
+	def horizontal(self, board, row, col, player, inARow):
+		count = 1
+		temp_col = col
+		while(temp_col+1 < 7 and board[row][temp_col+1] == player):
+			count += 1
+			temp_col += 1
+		
+		temp_col = col
+		while(temp_col-1 > -1 and board[row][temp_col-1] == player):
+			count += 1
 			temp_col -= 1
 		
 		return count
 	
-	def vertical(self, board, row, col):
-		count = 1
-		temp_row = row
-		while(temp_row+1 < 6 and board[temp_row+1][col] == 1):
-			count += 1
-			temp_row += 1
-		
-		temp_row = row
-		while(temp_row-1 > -1 and board[temp_row-1][col] == 1):
-			count += 1
-			temp_row -= 1
-		
-		return count
-	
-	def horizontal(self, board, row, col):
-		count = 1
-		temp_col = col
-		while(temp_col+1 < 7 and board[row][temp_col+1] == 1):
-			count += 1
-			temp_col += 1
-		
-		temp_col = col
-		while(temp_col-1 > -1 and board[row][temp_col-1] == 1):
-			count += 1
-			temp_col -= 1
-		
-		return count
-
 	def eval(self, env):
 		copy = deepcopy(env)
 		
+		#Who am I? Player1 or Player2?
+		if self.position == 1:
+			opponent = 2
+		elif self.position == 2:
+			opponent = 1
+		
+		#Start counting
+		myTwos = self.inARowCheck(copy, self.position, 2)
+		myThrees = self.inARowCheck(copy, self.position, 3)
+		myFours = self.inARowCheck(copy, self.position, 4)
+
+		opponentTwos = self.inARowCheck(copy, opponent, 2)
+		opponentThrees = self.inARowCheck(copy, opponent, 3)
+		opponentFours = self.inARowCheck(copy, opponent, 4)
+
+		#Tally things up
+		total = 8*(myFours - opponentFours) + 4*(myThrees - opponentThrees) + 2*(myTwos - opponentTwos)
+		return total
+
+	def inARowCheck(self, board, player, inARow):
 		for row in range(6):
 			for col in range(7):
-				ones = twos = threes = fours = 0
-				if copy.board[row][col] == 1:
-					print("I'm in player 1")
-					#check diagonals
-					val = self.backSlashDiag(copy.board,row,col)
-					if val == 1:
-						ones = 1
-					elif val == 2:
-						twos += 1
-					elif val == 3:
-						threes += 1
-					elif val == 4:
-						fours += 1
-					val = self.forwardSlashDiag(copy.board,row,col)
-					if val == 1:
-						ones = 1
-					elif val == 2:
-						twos += 1
-					elif val == 3:
-						threes += 1
-					elif val == 4:
-						fours += 1
-					#check horizontal
-					val = self.horizontal(copy.board,row,col)
-					if val == 1:
-						ones = 1
-					elif val == 2:
-						twos += 1
-					elif val == 3:
-						threes += 1
-					elif val == 4:
-						fours += 1
-					#check vertical
-					val = self.vertical(copy.board,row,col)
-					if val == 1:
-						ones = 1
-					elif val == 2:
-						twos += 1
-					elif val == 3:
-						threes += 1
-					elif val == 4:
-						fours += 1
-				elif copy.board[row][col] == 2:
-					print("I'm in player 2")
-					#check diagonals
-					#check horizontal
-					#check vertical
-		print("This is how many ones: ", ones, " twos: ", twos, " threes: ", threes, " fours: ", fours)
-
+				if board[row][col] == player:
+					#Check left down diagonal
+					self.backSlashDiag(board, row, col, player, inARow)
+					#Check left up diagonal
+					self.forwardSlashDiag(board, row, col, player, inARow)
+					#Check vertical
+					self.vertical(board, row, col, player, inARow)
+					#Check horizontals
+					self.horizontal(board, row, col, player, inARow)
+		
 	
 	def play(self, env, move):
 
