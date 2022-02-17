@@ -2,6 +2,7 @@ from cmath import inf
 from codecs import backslashreplace_errors
 from copy import copy, deepcopy
 from os import getenv
+from pickle import TRUE
 import random
 import time
 from turtle import down
@@ -82,7 +83,6 @@ class stupidAI(connect4Player):
 			move[:] = [0]
 
 class minimaxAI(connect4Player):
-	
 
 	def backSlashDiag(self, board, row, col, player, inARow):
 		tally = 0
@@ -141,10 +141,10 @@ class minimaxAI(connect4Player):
 		while(temp_row+1 < 6 and temp_inARow > 0 and board[temp_row+1][col] == player):
 			temp_inARow -= 1
 			temp_row += 1
-			print("row-")
+			#print("row-")
 		if temp_inARow == 0:
 			tally = 1
-			print("Tally changed vertical!")
+			#print("Tally changed vertical!")
 		
 		#Avoid double counting
 		#temp_inARow = inARow
@@ -178,12 +178,6 @@ class minimaxAI(connect4Player):
 	
 	def eval(self, env):
 		copy = deepcopy(env)
-		
-		#Who am I? Player1 or Player2?
-		if self.position == 1:
-			opponent = 2
-		elif self.position == 2:
-			opponent = 1
 
 		#Start counting
 		myTwos = self.inARowCheck(copy.board, self.position, 2)
@@ -191,13 +185,14 @@ class minimaxAI(connect4Player):
 		myFours = self.inARowCheck(copy.board, self.position, 4)
 		print("My twos: ", myTwos, " threes: ", myThrees, " fours: ", myFours)
 
-		opponentTwos = self.inARowCheck(copy.board, opponent, 2)
-		opponentThrees = self.inARowCheck(copy.board, opponent, 3)
-		opponentFours = self.inARowCheck(copy.board, opponent, 4)
+		opponentTwos = self.inARowCheck(copy.board, self.opponent.position, 2)
+		opponentThrees = self.inARowCheck(copy.board, self.opponent.position, 3)
+		opponentFours = self.inARowCheck(copy.board, self.opponent.position, 4)
 		print("Opponent twos: ", opponentTwos, " threes: ", opponentThrees, " fours: ", opponentFours)
 
 		#Tally things up
 		total = 8*(myFours - opponentFours) + 4*(myThrees - opponentThrees) + 2*(myTwos - opponentTwos)
+		print("Total: ", total)
 		return total
 
 	def inARowCheck(self, board, player, inARow):
@@ -205,7 +200,7 @@ class minimaxAI(connect4Player):
 		for row in range(6):
 			for col in range(7):
 				if board[row][col] == player:
-					print("[Row][Col]: [",row,"][",col,"]" )
+					#print("[Row][Col]: [",row,"][",col,"]" )
 					#Check left down diagonal
 					counter += self.backSlashDiag(board, row, col, player, inARow)
 					#Check left up diagonal
@@ -215,31 +210,85 @@ class minimaxAI(connect4Player):
 					#Check horizontals
 					counter += self.horizontal(board, row, col, player, inARow)
 		return counter
-		
+
+	def lastPlayerCalculator(self, env):
+		if len(env.history[0]) > len(env.history[1]):
+			print("The last player was player 1")
+			return 1
+		else:
+			print("The last player was player 2")
+			return 2
+
+	def lastMoveCalculator(self,env):
+		if len(env.history[0]) == 0:
+			#no one has played yet assume player 2 played last
+			return 0
+		elif len(env.history[0]) > len(env.history[1]):
+			#player 1 played last
+			return env.history[0][len(env.history[0])-1]
+		else:
+			#player 1 and player 2 have same length so player 2 played last
+			return env.history[1][len(env.history[1])-1]
 	
 	def play(self, env, move):
-
+		if self.position == 1 and len(env.history[0]) == 0 and len(env.history[1]) == 0:
+			move[:] = [3]
+		else:
+			move[:] = [self.minimax(env, 1, TRUE)[0]]
+	
+	def simulateMove(self, env, move, player):
+		env.board[env.topPosition[move]][move] = player
+		env.topPosition[move] -= 1
+		env.history[0].append(move)
+	
+	def minimax(self, env, depth, maximizingPlayer):
 		possible = env.topPosition >= 0
 		indices = []
 		for i, p in enumerate(possible):
 			if p: indices.append(i)
-		if 3 in indices:
-			move[:] = [3]
-		elif 2 in indices:
-			move[:] = [2]
-		elif 1 in indices:
-			move[:] = [1]
-		elif 5 in indices:
-			move[:] = [5]
-		elif 6 in indices:
-			move[:] = [6]
+		endNode = env.gameOver(self.lastMoveCalculator(env), self.lastPlayerCalculator(env))
+		if depth == 0 or endNode:
+			if endNode:
+				if self.lastPlayerCalculator == self.position:
+					return (None, 100000000)
+				elif self.lastPlayerCalculator == self.opponent.position:
+					return (None, -100000000)
+				else:
+					return (None, 0)
+			else:
+				return (None, self.eval(env))
+		if maximizingPlayer:
+			val = -math.inf
+			move_col = -math.inf
+			for col in indices:
+				row = env.topPosition[col]
+				copy = deepcopy(env)
+				self.simulateMove(copy, col, self.position)
+				score = self.minimax(copy, depth-1, False)[1]
+				if score > val:
+					val = score
+					move_col = col
+			return (move_col, val)
 		else:
-			move[:] = [0]
-		
-		self.eval(env)
+			val = math.inf
+			move_col = math.inf
+			for col in indices:
+				row = env.topPosition[col]
+				copy = deepcopy(env)
+				self.simulateMove(copy, col, self.opponent.position)
+				score = self.minimax(copy, depth-1, True)[1]
+				if score < val:
+					val = score
+					move_col = col
+			return (move_col, val)
+					
 
-	def minimax():
-		print("Chunk")
+		
+
+			
+
+
+		
 
 class alphaBetaAI(connect4Player):
 
