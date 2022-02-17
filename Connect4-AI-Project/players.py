@@ -1,9 +1,12 @@
 from cmath import inf
+from codecs import backslashreplace_errors
 from copy import copy, deepcopy
 from os import getenv
+from pickle import TRUE
 import random
 import time
 from turtle import down
+from typing import Counter
 import pygame
 import math
 
@@ -80,150 +83,212 @@ class stupidAI(connect4Player):
 			move[:] = [0]
 
 class minimaxAI(connect4Player):
-	
 
-	def backSlashDiag(self, board, row, col):
-		count = 1
+	def backSlashDiag(self, board, row, col, player, inARow):
+		tally = 0
+		temp_inARow = inARow-1
 		temp_row = row
 		temp_col = col
-		while(temp_row-1 > -1 and temp_col-1 > -1 and board[temp_row-1][temp_col-1] == 1):
-			count += 1
+		while(temp_row-1 > -1 and temp_col-1 > -1 and temp_inARow > 0 and board[temp_row-1][temp_col-1] == player):
+			temp_inARow -= 1
 			temp_row -= 1
 			temp_col -= 1
+		if temp_inARow == 0:
+			tally = 1
 		
-		temp_row = row
-		temp_col = col
-		while(temp_row+1 < 6 and temp_col+1 < 7 and board[temp_row+1][temp_col+1] == 1):
-			count += 1
-			temp_row += 1
-			temp_col += 1
+		#Avoid double counting
+		#temp_inARow = inARow
+		#temp_row = row
+		#temp_col = col
+		#while(temp_row+1 < 6 and temp_col+1 < 7 and temp_inARow > 0 and board[temp_row+1][temp_col+1] == player):
+		#	temp_inARow -= 1
+		#	temp_row += 1
+		#	temp_col += 1
+		#if temp_inARow == 0:
+		#	tally += 1
 		
-		return count
+		return tally
 	
-	def forwardSlashDiag(self, board, row, col):
-		count = 1
+	def forwardSlashDiag(self, board, row, col, player, inARow):
+		tally = 0
+		temp_inARow = inARow-1
 		temp_row = row
 		temp_col = col
-		while(temp_row-1 > -1 and temp_col+1 < 7 and board[temp_row-1][temp_col+1] == 1):
-			count += 1
+		while(temp_row-1 > -1 and temp_col+1 < 7 and temp_inARow > 0 and board[temp_row-1][temp_col+1] == player):
+			temp_inARow -= 1
 			temp_row -= 1
 			temp_col += 1
+		if temp_inARow == 0:
+			tally = 1
 		
-		temp_row = row
-		temp_col = col
-		while(temp_row+1 < 6 and temp_col-1 > -1 and board[temp_row+1][temp_col-1] == 1):
-			count += 1
-			temp_row += 1
-			temp_col -= 1
+		#Avoid double counting
+		#temp_inARow = inARow
+		#temp_row = row
+		#temp_col = col
+		#while(temp_row+1 < 6 and temp_col-1 > -1 and temp_inARow > 0 and board[temp_row+1][temp_col-1] == player):
+		#	temp_inARow -= 1
+		#	temp_row += 1
+		#	temp_col -= 1
+		#if temp_inARow == 0:
+		#	tally += 1
 		
-		return count
+		return tally
 	
-	def vertical(self, board, row, col):
-		count = 1
+	def vertical(self, board, row, col, player, inARow):
+		tally = 0
+		temp_inARow = inARow-1
 		temp_row = row
-		while(temp_row+1 < 6 and board[temp_row+1][col] == 1):
-			count += 1
+		while(temp_row+1 < 6 and temp_inARow > 0 and board[temp_row+1][col] == player):
+			temp_inARow -= 1
 			temp_row += 1
+			#print("row-")
+		if temp_inARow == 0:
+			tally = 1
+			#print("Tally changed vertical!")
 		
-		temp_row = row
-		while(temp_row-1 > -1 and board[temp_row-1][col] == 1):
-			count += 1
-			temp_row -= 1
+		#Avoid double counting
+		#temp_inARow = inARow
+		#temp_row = row
+		#while(temp_row-1 > -1 and board[temp_row-1][col] == player):
+		#	temp_inARow -= 1
+		#	temp_row -= 1
+		#	print("row-")
+		#if temp_inARow == 0:
+		#	tally += 1
 		
-		return count
+		return tally
 	
-	def horizontal(self, board, row, col):
-		count = 1
+	def horizontal(self, board, row, col, player, inARow):
+		tally = 0
+		temp_inARow = inARow-1
 		temp_col = col
-		while(temp_col+1 < 7 and board[row][temp_col+1] == 1):
-			count += 1
+		while(temp_col+1 < 7 and temp_inARow > 0 and board[row][temp_col+1] == player):
+			temp_inARow -= 1
 			temp_col += 1
+		if temp_inARow == 0:
+			tally = 1
 		
-		temp_col = col
-		while(temp_col-1 > -1 and board[row][temp_col-1] == 1):
-			count += 1
-			temp_col -= 1
+		#Avoid double counting
+		#temp_col = col
+		#while(temp_col-1 > -1 and board[row][temp_col-1] == player):
+		#	count += 1
+		#	temp_col -= 1
 		
-		return count
-
+		return tally
+	
 	def eval(self, env):
 		copy = deepcopy(env)
-		
+
+		#Start counting
+		myTwos = self.inARowCheck(copy.board, self.position, 2)
+		myThrees = self.inARowCheck(copy.board, self.position, 3)
+		myFours = self.inARowCheck(copy.board, self.position, 4)
+		print("My twos: ", myTwos, " threes: ", myThrees, " fours: ", myFours)
+
+		opponentTwos = self.inARowCheck(copy.board, self.opponent.position, 2)
+		opponentThrees = self.inARowCheck(copy.board, self.opponent.position, 3)
+		opponentFours = self.inARowCheck(copy.board, self.opponent.position, 4)
+		print("Opponent twos: ", opponentTwos, " threes: ", opponentThrees, " fours: ", opponentFours)
+
+		#Tally things up
+		total = 8*(myFours - opponentFours) + 4*(myThrees - opponentThrees) + 2*(myTwos - opponentTwos)
+		print("Total: ", total)
+		return total
+
+	def inARowCheck(self, board, player, inARow):
+		counter = 0
 		for row in range(6):
 			for col in range(7):
-				ones = twos = threes = fours = 0
-				if copy.board[row][col] == 1:
-					print("I'm in player 1")
-					#check diagonals
-					val = self.backSlashDiag(copy.board,row,col)
-					if val == 1:
-						ones = 1
-					elif val == 2:
-						twos += 1
-					elif val == 3:
-						threes += 1
-					elif val == 4:
-						fours += 1
-					val = self.forwardSlashDiag(copy.board,row,col)
-					if val == 1:
-						ones = 1
-					elif val == 2:
-						twos += 1
-					elif val == 3:
-						threes += 1
-					elif val == 4:
-						fours += 1
-					#check horizontal
-					val = self.horizontal(copy.board,row,col)
-					if val == 1:
-						ones = 1
-					elif val == 2:
-						twos += 1
-					elif val == 3:
-						threes += 1
-					elif val == 4:
-						fours += 1
-					#check vertical
-					val = self.vertical(copy.board,row,col)
-					if val == 1:
-						ones = 1
-					elif val == 2:
-						twos += 1
-					elif val == 3:
-						threes += 1
-					elif val == 4:
-						fours += 1
-				elif copy.board[row][col] == 2:
-					print("I'm in player 2")
-					#check diagonals
-					#check horizontal
-					#check vertical
-		print("This is how many ones: ", ones, " twos: ", twos, " threes: ", threes, " fours: ", fours)
+				if board[row][col] == player:
+					#print("[Row][Col]: [",row,"][",col,"]" )
+					#Check left down diagonal
+					counter += self.backSlashDiag(board, row, col, player, inARow)
+					#Check left up diagonal
+					counter += self.forwardSlashDiag(board, row, col, player, inARow)
+					#Check vertical
+					counter += self.vertical(board, row, col, player, inARow)
+					#Check horizontals
+					counter += self.horizontal(board, row, col, player, inARow)
+		return counter
 
+	def lastPlayerCalculator(self, env):
+		if len(env.history[0]) > len(env.history[1]):
+			print("The last player was player 1")
+			return 1
+		else:
+			print("The last player was player 2")
+			return 2
+
+	def lastMoveCalculator(self,env):
+		if len(env.history[0]) == 0:
+			#no one has played yet assume player 2 played last
+			return 0
+		elif len(env.history[0]) > len(env.history[1]):
+			#player 1 played last
+			return env.history[0][len(env.history[0])-1]
+		else:
+			#player 1 and player 2 have same length so player 2 played last
+			return env.history[1][len(env.history[1])-1]
 	
 	def play(self, env, move):
-
+		if self.position == 1 and len(env.history[0]) == 0 and len(env.history[1]) == 0:
+			move[:] = [3]
+		else:
+			move[:] = [self.minimax(env, 1, TRUE)[0]]
+	
+	def simulateMove(self, env, move, player):
+		env.board[env.topPosition[move]][move] = player
+		env.topPosition[move] -= 1
+		env.history[0].append(move)
+	
+	def minimax(self, env, depth, maximizingPlayer):
 		possible = env.topPosition >= 0
 		indices = []
 		for i, p in enumerate(possible):
 			if p: indices.append(i)
-		if 3 in indices:
-			move[:] = [3]
-		elif 2 in indices:
-			move[:] = [2]
-		elif 1 in indices:
-			move[:] = [1]
-		elif 5 in indices:
-			move[:] = [5]
-		elif 6 in indices:
-			move[:] = [6]
+		endNode = env.gameOver(self.lastMoveCalculator(env), self.lastPlayerCalculator(env))
+		if depth == 0 or endNode:
+			if endNode:
+				if self.lastPlayerCalculator == self.position:
+					return (None, 100000000)
+				elif self.lastPlayerCalculator == self.opponent.position:
+					return (None, -100000000)
+				else:
+					return (None, 0)
+			else:
+				return (None, self.eval(env))
+		if maximizingPlayer:
+			val = -math.inf
+			move_col = -math.inf
+			for col in indices:
+				row = env.topPosition[col]
+				copy = deepcopy(env)
+				self.simulateMove(copy, col, self.position)
+				score = self.minimax(copy, depth-1, False)[1]
+				if score > val:
+					val = score
+					move_col = col
+			return (move_col, val)
 		else:
-			move[:] = [0]
-		
-		self.eval(env)
+			val = math.inf
+			move_col = math.inf
+			for col in indices:
+				row = env.topPosition[col]
+				copy = deepcopy(env)
+				self.simulateMove(copy, col, self.opponent.position)
+				score = self.minimax(copy, depth-1, True)[1]
+				if score < val:
+					val = score
+					move_col = col
+			return (move_col, val)
+					
 
-	def minimax():
-		print("Chunk")
+		
+
+			
+
+
+		
 
 class alphaBetaAI(connect4Player):
 

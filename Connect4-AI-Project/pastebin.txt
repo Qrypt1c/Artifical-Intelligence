@@ -321,3 +321,93 @@ Special note for debugging: Check the math where var = var + temp, unsure if it 
 		print("Number of twos: ", twos, " threes: ", threes, "fours: ", fours)
 		print(" Here's count 2: ", count2)
 		# EXIT BS HERE
+
+
+		for row in range(6):
+			for col in range(7):
+				ones = twos = threes = fours = 0
+				ones2 = twos2 = threes2 = fours2 = 0
+				if copy.board[row][col] == 1:
+					print("I'm in player 1")
+					#check diagonals
+					val = self.backSlashDiag(copy.board,row,col,1)
+					if val == 1:
+						ones = 1
+					elif val == 2:
+						twos += 1
+					elif val == 3:
+						threes += 1
+					elif val == 4:
+						fours += 1
+					val = self.forwardSlashDiag(copy.board,row,col,1)
+					if val == 1:
+						ones = 1
+					elif val == 2:
+						twos += 1
+					elif val == 3:
+						threes += 1
+					elif val == 4:
+						fours += 1
+					#check horizontal
+					val = self.horizontal(copy.board,row,col,1)
+					if val == 1:
+						ones = 1
+					elif val == 2:
+						twos += 1
+					elif val == 3:
+						threes += 1
+					elif val == 4:
+						fours += 1
+					#check vertical
+					val = self.vertical(copy.board,row,col,1)
+					if val == 1:
+						ones = 1
+					elif val == 2:
+						twos += 1
+					elif val == 3:
+						threes += 1
+					elif val == 4:
+						fours += 1
+				elif copy.board[row][col] == 2:
+					print("I'm in player 2")
+					#check diagonals
+					val = self.backSlashDiag(copy.board,row,col,2)
+					if val == 1:
+						ones2 = 1
+					elif val == 2:
+						twos2 += 1
+					elif val == 3:
+						threes2 += 1
+					elif val == 4:
+						fours2 += 1
+					val = self.forwardSlashDiag(copy.board,row,col,2)
+					if val == 1:
+						ones2 = 1
+					elif val == 2:
+						twos2 += 1
+					elif val == 3:
+						threes2 += 1
+					elif val == 4:
+						fours2 += 1
+					#check horizontal
+					val = self.horizontal(copy.board,row,col,2)
+					if val == 1:
+						ones2 = 1
+					elif val == 2:
+						twos2 += 1
+					elif val == 3:
+						threes2 += 1
+					elif val == 4:
+						fours2 += 1
+					#check vertical
+					val = self.vertical(copy.board,row,col,2)
+					if val == 1:
+						ones2 = 1
+					elif val == 2:
+						twos2 += 1
+					elif val == 3:
+						threes2 += 1
+					elif val == 4:
+						fours2 += 1
+		print("Player 1 - This is how many ones: ", ones, " twos: ", twos, " threes: ", threes, " fours: ", fours)
+		print("Player 2 - This is how many ones: ", ones, " twos: ", twos, " threes: ", threes, " fours: ", fours)
