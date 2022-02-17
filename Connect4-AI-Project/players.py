@@ -191,7 +191,7 @@ class minimaxAI(connect4Player):
 		print("Opponent twos: ", opponentTwos, " threes: ", opponentThrees, " fours: ", opponentFours)
 
 		#Tally things up
-		total = 1000*(myFours - opponentFours) + 100*(myThrees - opponentThrees) + 2*(myTwos - opponentTwos)
+		total = 1000*(myFours - opponentFours) + 50*(myThrees - opponentThrees) + 10*(myTwos - opponentTwos)
 		print("Total: ", total)
 		return total
 
