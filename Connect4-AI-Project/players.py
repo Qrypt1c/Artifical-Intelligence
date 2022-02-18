@@ -183,16 +183,16 @@ class minimaxAI(connect4Player):
 		myTwos = self.inARowCheck(copy.board, self.position, 2)
 		myThrees = self.inARowCheck(copy.board, self.position, 3)
 		myFours = self.inARowCheck(copy.board, self.position, 4)
-		print("My twos: ", myTwos, " threes: ", myThrees, " fours: ", myFours)
+		#print("My twos: ", myTwos, " threes: ", myThrees, " fours: ", myFours)
 
 		opponentTwos = self.inARowCheck(copy.board, self.opponent.position, 2)
 		opponentThrees = self.inARowCheck(copy.board, self.opponent.position, 3)
 		opponentFours = self.inARowCheck(copy.board, self.opponent.position, 4)
-		print("Opponent twos: ", opponentTwos, " threes: ", opponentThrees, " fours: ", opponentFours)
+		#print("Opponent twos: ", opponentTwos, " threes: ", opponentThrees, " fours: ", opponentFours)
 
 		#Tally things up
 		total = 1000*(myFours - opponentFours) + 50*(myThrees - opponentThrees) + 10*(myTwos - opponentTwos)
-		print("Total: ", total)
+		#print("Total: ", total)
 		return total
 
 	def inARowCheck(self, board, player, inARow):
@@ -238,8 +238,8 @@ class minimaxAI(connect4Player):
 			# move[:] = [self.l1Bot(env, self.position)]
 	
 	def simulateMove(self, env, move, player):
-		print("Simulating for Player: ", player)
-		print("Simulating col: ", move)
+		#print("Simulating for Player: ", player)
+		#print("Simulating col: ", move)
 		env.board[env.topPosition[move]][move] = player
 		env.topPosition[move] -= 1
 		if player == 1:
@@ -254,7 +254,7 @@ class minimaxAI(connect4Player):
 		for i, p in enumerate(possible):
 			if p: indices.append(i)
 		endNode = env.gameOver(self.lastMoveCalculator(env), self.lastPlayerCalculator(env))
-		print("Bool val: ", endNode)
+		#print("Bool val: ", endNode)
 		if endNode or depth == 0:
 			if endNode:
 				if self.lastPlayerCalculator(env) == self.position:
@@ -303,7 +303,7 @@ class alphaBetaAI(connect4Player):
 			if p: indices.append(i)
 		endNode = env.gameOver(self, minimaxAI.lastMoveCalculator(env), minimaxAI.lastPlayerCalculator(env))
 		endNode = 0
-		print("Bool val: ", endNode)
+		#print("Bool val: ", endNode)
 		if endNode or depth == 0:
 			if endNode:
 				if minimaxAI.lastPlayerCalculator == self.position:
