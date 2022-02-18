@@ -234,7 +234,7 @@ class minimaxAI(connect4Player):
 		if self.position == 1 and len(env.history[0]) == 0 and len(env.history[1]) == 0:
 			move[:] = [3]
 		else:
-			move[:] = [self.minimax(env, 2, TRUE)[0]]
+			move[:] = [self.minimax(env, 4, TRUE)[0]]
 			# move[:] = [self.l1Bot(env, self.position)]
 	
 	def simulateMove(self, env, move, player):
