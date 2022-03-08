@@ -183,16 +183,16 @@ class minimaxAI(connect4Player):
 		myTwos = self.inARowCheck(copy.board, self.position, 2)
 		myThrees = self.inARowCheck(copy.board, self.position, 3)
 		myFours = self.inARowCheck(copy.board, self.position, 4)
-		print("My twos: ", myTwos, " threes: ", myThrees, " fours: ", myFours)
+		#print("My twos: ", myTwos, " threes: ", myThrees, " fours: ", myFours)
 
 		opponentTwos = self.inARowCheck(copy.board, self.opponent.position, 2)
 		opponentThrees = self.inARowCheck(copy.board, self.opponent.position, 3)
 		opponentFours = self.inARowCheck(copy.board, self.opponent.position, 4)
-		print("Opponent twos: ", opponentTwos, " threes: ", opponentThrees, " fours: ", opponentFours)
+		#print("Opponent twos: ", opponentTwos, " threes: ", opponentThrees, " fours: ", opponentFours)
 
 		#Tally things up
-		total = 8*(myFours - opponentFours) + 4*(myThrees - opponentThrees) + 2*(myTwos - opponentTwos)
-		print("Total: ", total)
+		total = 1000*(myFours - opponentFours) + 50*(myThrees - opponentThrees) + 10*(myTwos - opponentTwos)
+		#print("Total: ", total)
 		return total
 
 	def inARowCheck(self, board, player, inARow):
@@ -213,10 +213,10 @@ class minimaxAI(connect4Player):
 
 	def lastPlayerCalculator(self, env):
 		if len(env.history[0]) > len(env.history[1]):
-			print("The last player was player 1")
+			#print("The last player was player 1")
 			return 1
 		else:
-			print("The last player was player 2")
+			#print("The last player was player 2")
 			return 2
 
 	def lastMoveCalculator(self,env):
@@ -234,12 +234,19 @@ class minimaxAI(connect4Player):
 		if self.position == 1 and len(env.history[0]) == 0 and len(env.history[1]) == 0:
 			move[:] = [3]
 		else:
-			move[:] = [self.minimax(env, 1, TRUE)[0]]
+			move[:] = [self.minimax(env, 4, TRUE)[0]]
+			# move[:] = [self.l1Bot(env, self.position)]
 	
 	def simulateMove(self, env, move, player):
+		#print("Simulating for Player: ", player)
+		#print("Simulating col: ", move)
 		env.board[env.topPosition[move]][move] = player
 		env.topPosition[move] -= 1
-		env.history[0].append(move)
+		if player == 1:
+			env.history[0].append(move)
+		elif player == 2:
+			env.history[1].append(move)
+		return env
 	
 	def minimax(self, env, depth, maximizingPlayer):
 		possible = env.topPosition >= 0
@@ -247,11 +254,12 @@ class minimaxAI(connect4Player):
 		for i, p in enumerate(possible):
 			if p: indices.append(i)
 		endNode = env.gameOver(self.lastMoveCalculator(env), self.lastPlayerCalculator(env))
-		if depth == 0 or endNode:
+		#print("Bool val: ", endNode)
+		if endNode or depth == 0:
 			if endNode:
-				if self.lastPlayerCalculator == self.position:
+				if self.lastPlayerCalculator(env) == self.position:
 					return (None, 100000000)
-				elif self.lastPlayerCalculator == self.opponent.position:
+				elif self.lastPlayerCalculator(env) == self.opponent.position:
 					return (None, -100000000)
 				else:
 					return (None, 0)
@@ -283,17 +291,66 @@ class minimaxAI(connect4Player):
 			return (move_col, val)
 					
 
-		
-
-			
-
-
-		
-
 class alphaBetaAI(connect4Player):
 
-	def play(self, env, move):
+	def successorFunction():
 		pass
+
+	def alphaBetaPruning(self, env, depth, alpha, beta, maximizingPlayer):
+		possible = env.topPosition >= 0
+		indices = []
+		for i, p in enumerate(possible):
+			if p: indices.append(i)
+		endNode = env.gameOver(self, minimaxAI.lastMoveCalculator(env), minimaxAI.lastPlayerCalculator(env))
+		endNode = 0
+		#print("Bool val: ", endNode)
+		if endNode or depth == 0:
+			if endNode:
+				if minimaxAI.lastPlayerCalculator == self.position:
+					return (None, 100000000)
+				elif minimaxAI.lastPlayerCalculator == self.opponent.position:
+					return (None, -100000000)
+				else:
+					return (None, 0)
+			else:
+				return (None, minimaxAI.eval(env))
+		if maximizingPlayer:
+			val = -math.inf
+			move_col = -math.inf
+			for col in indices:
+				row = env.topPosition[col]
+				copy = deepcopy(env)
+				minimaxAI.simulateMove(copy, col, self.position)
+				score = self.alphaBetaPruning(copy, depth-1, alpha, beta, False)[1]
+				if score > val:
+					val = score
+					move_col = col
+				if val >= beta:
+					break
+				alpha = max(alpha, val)
+			return (move_col, val)
+		else:
+			val = math.inf
+			move_col = math.inf
+			for col in indices:
+				row = env.topPosition[col]
+				copy = deepcopy(env)
+				minimaxAI.simulateMove(copy, col, self.opponent.position)
+				score = self.alphaBetaPruning(copy, depth-1, alpha, beta, True)[1]
+				if score < val:
+					val = score
+					move_col = col
+				if val <= alpha:
+					break
+				beta = min(beta, val)
+			return (move_col, val)
+	
+	def play(self, env, move):
+		if self.position == 1 and len(env.history[0]) == 0 and len(env.history[1]) == 0:
+			move[:] = [3]
+		else:
+			move[:] = [self.alphaBetaPruning(env, 3, -math.inf, math.inf, TRUE)[0]]
+			# move[:] = [self.l1Bot(env, self.position)]
 
 
 SQUARESIZE = 100
