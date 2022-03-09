@@ -11,6 +11,7 @@ import torch.autograd as autograd
 import torch.nn.functional as F
 USE_CUDA = torch.cuda.is_available()
 from dqn import QLearner, compute_td_loss, ReplayBuffer
+import pickle
 
 env_id = "PongNoFrameskip-v4"
 env = make_atari(env_id)
@@ -80,6 +81,10 @@ for frame_idx in range(1, num_frames + 1):
 
     if frame_idx % 50000 == 0:
         target_model.copy_from(model)
-
+        torch.save(model.state_dict(),"Model1.pth")
+        with open('rewards.pkl', 'wb') as rewards:
+            pickleRick = pickle.dump(all_rewards)
+        with open('losses.pkl', 'wb') as losses:
+            pickleMorty = pickle.dump(losses)
 
 
