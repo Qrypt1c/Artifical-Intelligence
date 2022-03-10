@@ -62,23 +62,27 @@ def compute_td_loss(model, target_model, batch_size, gamma, replay_buffer):
     state, action, reward, next_state, done = replay_buffer.sample(batch_size)
 
     state = Variable(torch.FloatTensor(np.float32(state)))
-    next_state = Variable(torch.FloatTensor(np.float32(next_state)).squeeze(1), requires_grad=True)
+    next_state = Variable(torch.FloatTensor(np.float32(next_state)), requires_grad=True)
     action = Variable(torch.LongTensor(action))
     reward = Variable(torch.FloatTensor(reward))
     done = Variable(torch.FloatTensor(done))
     # implement the loss function here
     # Q(s,a) = r(s,a) + y maxQ(s',a')
+    #Ge's clever method
     not_done = 1-done
 
-    actual_Qvals = model(state)
-    expected_nextQvals = target_model(next_state)
-    expected_nextQvals = torch.detach(expected_nextQvals)
+    #load q vals for models
+    actualQvals = model(state)
+    expectedNextQvals = target_model(next_state)
 
-    y_i = actual_Qvals[range(len(action)), action]
-    Q_prime = torch.max(expected_nextQvals, dim=1)[0] * not_done
+    #pick out q vals for given action
+    actual = actualQvals[range(len(action)), action]
+    
+    expectedQval = torch.argmax(expectedNextQvals).item() * not_done
 
-    actualQvals = reward + (gamma * Q_prime)
-    loss = torch.nn.MSELoss(reduction='sum')(y_i, actual_Qvals.detach())
+    expected = reward + gamma * expectedQval
+
+    loss = torch.mean((expected - actual)**2)
     
     return loss
 
