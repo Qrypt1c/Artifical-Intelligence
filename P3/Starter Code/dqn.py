@@ -1,4 +1,5 @@
 from collections import deque
+from operator import index
 import numpy as np
 import matplotlib.pyplot as plt
 import torch
@@ -49,7 +50,10 @@ class QLearner(nn.Module):
             state = Variable(torch.FloatTensor(np.float32(state)).unsqueeze(0), requires_grad=True)
             # TODO: Given state, you should write code to get the Q value and chosen action
             possible_actions = self(state)
-            action = torch.argmax(possible_actions).item()
+            possible_actions = possible_actions.cpu()
+            possible_actions = possible_actions.detach().numpy()
+            index = np.argmax(possible_actions[0])
+            action = possible_actions[0][index]
         else:
             action = random.randrange(self.env.action_space.n)
         return action
@@ -74,11 +78,14 @@ def compute_td_loss(model, target_model, batch_size, gamma, replay_buffer):
     #load q vals for models
     actualQvals = model(state)
     expectedNextQvals = target_model(next_state)
+    expectedNextQvals = expectedNextQvals.cpu()
+    expectedNextQvals = expectedNextQvals.detach().numpy()
 
     #pick out q vals for given action
     actual = actualQvals[range(len(action)), action]
     
-    expectedQval = torch.argmax(expectedNextQvals).item() * not_done
+    index = np.argmax(expectedNextQvals[0])
+    expectedQval = expectedNextQvals[0][index] * not_done
 
     expected = reward + gamma * expectedQval
 
